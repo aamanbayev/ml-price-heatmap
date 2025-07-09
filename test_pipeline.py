@@ -1,17 +1,19 @@
 #%%
-from src.data_utils import load_and_preprocess_data, split_data
-from src.dataset import get_dataloaders
+from src.data_utils import load_and_preprocess_data
+from torch.utils.data import TensorDataset, DataLoader, random_split
+import torch
 
-# Step 1: Load and preprocess
+# Peprocess Data
 coords, prices, coord_scaler, price_scaler = load_and_preprocess_data("data/listings.csv")
 
-# Step 3: Split the data
-train_data, val_data, test_data = split_data(coords, prices)
+# Create Dataloaders
+_T = lambda a: torch.tensor(a, dtype=torch.float32)
+dataset = TensorDataset(_T(coords), _T(prices))
 
-# Step 4: Load into PyTorch Dataloaders
-train_dl, val_dl, test_dl = get_dataloaders(train_data, val_data, test_data)
+train_dl, val_dl, test_dl = [DataLoader(ds, batch_size=128) for ds in 
+                             random_split(dataset, [0.7, 0.15, 0.15])]
 
-# Step 5: Print some batches
+# Print Test Output
 for coords_batch, prices_batch in train_dl:
     print("Coordinates:", coords_batch.shape)
     print("Prices:", prices_batch.shape)
