@@ -1,8 +1,6 @@
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
-import joblib
-import os
 
 def load_and_preprocess_data(path):
     df = pd.read_csv(path)
@@ -18,11 +16,6 @@ def load_and_preprocess_data(path):
     prices_scaled = price_scaler.fit_transform(prices)
 
     return coords_scaled, prices_scaled, coord_scaler, price_scaler
-
-def save_scalers(coord_scaler, price_scaler, output_dir):
-    os.makedirs(output_dir, exist_ok=True)
-    joblib.dump(coord_scaler, os.path.join(output_dir, 'coord_scaler.pkl'))
-    joblib.dump(price_scaler, os.path.join(output_dir, 'price_scaler.pkl'))
 
 def split_data(coords, prices, train_ratio=0.7, val_ratio=0.15):
     N = coords.shape[0]
